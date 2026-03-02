@@ -3,8 +3,6 @@ name: Deploy to Railway
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 jobs:
   test:
@@ -19,12 +17,10 @@ jobs:
           python-version: '3.11'
 
       - name: 📦 Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: ✅ Run Django checks
-        run: |
-          python manage.py check
+        run: python manage.py check
         env:
           SECRET_KEY: 'github-actions-test-key'
           DEBUG: 'True'
@@ -32,13 +28,13 @@ jobs:
   deploy:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: 🚀 Deploy to Railway
-        uses: bervProject/railway-deploy@main
-        with:
-          railway_token: ${{ secrets.RAILWAY_TOKEN }}
-          service: ${{ secrets.RAILWAY_SERVICE }}
+      - name: 🚀 Install Railway CLI & Deploy
+        run: |
+          npm install -g @railway/cli
+          railway up --detach
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
