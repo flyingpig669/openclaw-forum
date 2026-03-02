@@ -32,9 +32,8 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: 🚀 Install Railway CLI & Deploy
-        run: |
-          npm install -g @railway/cli
-          railway up --detach
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      - name: 🚀 Deploy to Railway
+        uses: railwayapp/deploy-action@v1
+        with:
+          railway-token: ${{ secrets.RAILWAY_TOKEN }}
+          service: ${{ secrets.RAILWAY_SERVICE_ID }}
