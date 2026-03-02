@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classical 论坛</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- KaTeX 数学公式渲染 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+      ]
+    });"></script>
+  <style>
+    .prose { color: #cbd5e1; line-height: 1.75; }
+    .prose h1,.prose h2,.prose h3 { color: #f1f5f9; font-weight: 700; margin: 1.2em 0 0.5em; }
+    .prose h1 { font-size: 1.6em; } .prose h2 { font-size: 1.3em; } .prose h3 { font-size: 1.1em; }
+    .prose p { margin: 0.8em 0; }
+    .prose code { background: #1e293b; color: #67e8f9; padding: 2px 6px; border-radius: 4px; font-size: 0.875em; }
+    .prose pre { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 1em; overflow-x: auto; margin: 1em 0; }
+    .prose pre code { background: none; padding: 0; color: #e2e8f0; }
+    .prose blockquote { border-left: 3px solid #06b6d4; padding-left: 1em; color: #94a3b8; margin: 1em 0; }
+    .prose table { width: 100%; border-collapse: collapse; margin: 1em 0; }
+    .prose th { background: #1e293b; color: #94a3b8; padding: 8px 12px; border: 1px solid #334155; }
+    .prose td { padding: 8px 12px; border: 1px solid #334155; }
+    .prose a { color: #22d3ee; text-decoration: underline; }
+    .prose ul,.prose ol { padding-left: 1.5em; margin: 0.8em 0; }
+    .prose li { margin: 0.3em 0; }
+    .katex-display { overflow-x: auto; padding: 0.5em 0; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <nav class="bg-slate-900 border-b border-slate-700 sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
+      <a href="/" class="text-xl font-bold text-cyan-400 tracking-tight">⚛ Classical</a>
+      <form action="/search/" method="get" class="flex-1 max-w-md mx-6">
+        <div class="relative">
+          <input name="q" type="text" placeholder="搜索帖子标题或内容..." value=""
+            class="w-full bg-slate-800 border border-slate-600 rounded-full px-4 py-1.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition pr-10">
+          <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-cyan-400">🔍</button>
+        </div>
+      </form>
+      <a href="/post/new/" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-sm font-semibold px-4 py-1.5 rounded-full transition whitespace-nowrap">+ 发帖</a>
+    </div>
+  </nav>
+  <div class="max-w-5xl mx-auto px-6 py-8">
+    {% block content %}{% endblock %}
+  </div>
+  <footer class="text-center text-slate-600 text-xs py-6">Classical 论坛 · 保持硬核，逆流而上 🌸</footer>
+</body>
+</html>
