@@ -1,47 +1,111 @@
 {% extends 'forum/base.html' %}
 {% block content %}
-<div class="max-w-3xl">
-  <div class="mb-4">
-    <a href="/" class="text-slate-500 hover:text-cyan-400 text-sm transition">← 返回首页</a>
-  </div>
-  <div class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden mb-6">
-    {% if post.cover_image %}
-    <img src="{{ post.cover_image.url }}" class="w-full max-h-64 object-cover" alt="封面图">
-    {% endif %}
-    <div class="p-6">
-      <span class="text-xs text-cyan-500 font-medium">{{ post.category.icon }} {{ post.category.name }}</span>
-      <h1 class="text-2xl font-bold mt-2 mb-3 text-slate-100">{{ post.title }}</h1>
-      <div class="flex gap-3 text-xs text-slate-500 mb-5 pb-4 border-b border-slate-700">
-        <span>👤 {{ post.author }}</span>
-        <span>🕐 {{ post.created_at|date:"Y-m-d H:i" }}</span>
-        <span>👁 {{ post.views }}</span>
-        {% if post.md_file %}<span class="text-cyan-600">📄 Markdown</span>{% endif %}
+<div class="flex gap-6 items-start">
+  <!-- 主内容区 -->
+  <div class="flex-1 min-w-0">
+    <div class="mb-4">
+      <a href="/" class="text-slate-500 hover:text-cyan-400 text-sm transition">← 返回首页</a>
+    </div>
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden mb-6">
+      <div class="p-6">
+        <span class="text-xs text-cyan-500 font-medium">{{ post.category.icon }} {{ post.category.name }}</span>
+        <h1 class="text-2xl font-bold mt-2 mb-3 text-slate-100">{{ post.title }}</h1>
+        <div class="flex gap-3 text-xs text-slate-500 mb-5 pb-4 border-b border-slate-700">
+          <span>👤 {{ post.author }}</span>
+          <span>🕐 {{ post.created_at|date:"Y-m-d H:i" }}</span>
+          <span>👁 {{ post.views }}</span>
+          {% if post.md_file %}<span class="text-cyan-600">📄 Markdown</span>{% endif %}
+        </div>
+        <div class="prose" id="post-content">{{ rendered_content|safe }}</div>
       </div>
-      <div class="prose">{{ rendered_content|safe }}</div>
+    </div>
+
+    <h2 class="text-lg font-semibold text-slate-300 mb-4">💬 评论 ({{ comments.count }})</h2>
+    {% for comment in comments %}
+    <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 mb-3">
+      <div class="flex gap-3 text-xs text-slate-500 mb-2">
+        <span>👤 {{ comment.author }}</span>
+        <span>{{ comment.created_at|date:"m-d H:i" }}</span>
+      </div>
+      <p class="text-slate-300 text-sm">{{ comment.content }}</p>
+    </div>
+    {% empty %}
+    <p class="text-slate-500 text-sm mb-4">还没有评论，来抢沙发！</p>
+    {% endfor %}
+
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 mt-4">
+      <h3 class="font-semibold text-slate-300 mb-3">发表评论</h3>
+      <form method="post">
+        {% csrf_token %}
+        <input name="author" placeholder="昵称（可选）" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 mb-3 focus:outline-none focus:border-cyan-500 transition">
+        <textarea name="content" rows="3" placeholder="写下你的想法..." class="w-full bg-slate-900 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 mb-3 focus:outline-none focus:border-cyan-500 transition resize-none"></textarea>
+        <button type="submit" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold px-5 py-2 rounded-xl transition text-sm">提交</button>
+      </form>
     </div>
   </div>
 
-  <h2 class="text-lg font-semibold text-slate-300 mb-4">💬 评论 ({{ comments.count }})</h2>
-  {% for comment in comments %}
-  <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 mb-3">
-    <div class="flex gap-3 text-xs text-slate-500 mb-2">
-      <span>👤 {{ comment.author }}</span>
-      <span>{{ comment.created_at|date:"m-d H:i" }}</span>
+  <!-- 右侧目录 -->
+  <div class="w-56 flex-shrink-0 hidden lg:block">
+    <div id="toc-box" class="sticky top-20 bg-slate-800 border border-slate-700 rounded-xl p-4" style="display:none!important">
+      <h4 class="text-xs font-bold text-cyan-400 uppercase tracking-widest mb-3">📋 目录</h4>
+      <nav id="toc-nav" class="space-y-1 text-sm max-h-[70vh] overflow-y-auto"></nav>
     </div>
-    <p class="text-slate-300 text-sm">{{ comment.content }}</p>
-  </div>
-  {% empty %}
-  <p class="text-slate-500 text-sm mb-4">还没有评论，来抢沙发！</p>
-  {% endfor %}
-
-  <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 mt-4">
-    <h3 class="font-semibold text-slate-300 mb-3">发表评论</h3>
-    <form method="post">
-      {% csrf_token %}
-      <input name="author" placeholder="昵称（可选）" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 mb-3 focus:outline-none focus:border-cyan-500 transition">
-      <textarea name="content" rows="3" placeholder="写下你的想法..." class="w-full bg-slate-900 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 mb-3 focus:outline-none focus:border-cyan-500 transition resize-none"></textarea>
-      <button type="submit" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold px-5 py-2 rounded-xl transition text-sm">提交</button>
-    </form>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var content = document.getElementById('post-content');
+  var tocNav = document.getElementById('toc-nav');
+  var tocBox = document.getElementById('toc-box');
+  var headings = content.querySelectorAll('h1, h2, h3, h4');
+
+  if (headings.length < 2) return;
+
+  tocBox.style.cssText = '';  // 恢复显示
+
+  headings.forEach(function(h, i) {
+    // 给标题加锚点
+    if (!h.id) h.id = 'heading-' + i;
+
+    var level = parseInt(h.tagName[1]);
+    var indent = (level - 1) * 10;
+
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    a.style.paddingLeft = indent + 'px';
+    a.className = 'block text-slate-400 hover:text-cyan-300 transition leading-relaxed truncate py-0.5';
+    if (level === 1) a.className += ' font-semibold text-slate-300';
+
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById(h.id).scrollIntoView({behavior: 'smooth', block: 'start'});
+    });
+
+    tocNav.appendChild(a);
+  });
+
+  // 滚动高亮当前章节
+  window.addEventListener('scroll', function() {
+    var scrollY = window.scrollY + 100;
+    var links = tocNav.querySelectorAll('a');
+    var current = null;
+
+    headings.forEach(function(h) {
+      if (h.offsetTop <= scrollY) current = h.id;
+    });
+
+    links.forEach(function(a) {
+      if (a.getAttribute('href') === '#' + current) {
+        a.classList.add('text-cyan-400', 'font-semibold');
+        a.classList.remove('text-slate-400');
+      } else {
+        a.classList.remove('text-cyan-400', 'font-semibold');
+        a.classList.add('text-slate-400');
+      }
+    });
+  });
+});
+</script>
 {% endblock %}
